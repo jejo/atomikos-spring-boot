@@ -1,0 +1,103 @@
+buildscript {
+    apply from: file('gradle/buildscript.gradle'), to: buildscript
+}
+
+
+project.buildDir = 'target'
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: "idea"
+    apply plugin: "io.spring.dependency-management"
+
+    project.buildDir = 'target'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        maven {
+            url 'http://jaspersoft.artifactoryonline.com/jaspersoft/third-party-ce-artifacts/'
+        }
+        maven {
+            url 'http://jasperreports.sourceforge.net/maven2'
+        }
+        maven {
+            url 'http://repository.jboss.org/maven2/'
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+
+jar {
+    baseName = 'atomikos'
+    version = '1.0.0.BUILD-SNAPSHOT'
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    maven {
+        url 'http://jaspersoft.artifactoryonline.com/jaspersoft/third-party-ce-artifacts/'
+    }
+    maven {
+        url 'http://jasperreports.sourceforge.net/maven2'
+    }
+    maven {
+        url 'http://repository.jboss.org/maven2/'
+    }
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+}
+
+configurations {
+    compile.exclude module: 'tomcat-jdbc'
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.boot:spring-boot-starter-jdbc'
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'org.springframework.boot:spring-boot-starter-test'
+    compile 'org.hibernate:hibernate-java8'
+
+    // Atomikos
+    compile 'com.atomikos:transactions-jdbc:4.0.4'
+    compile 'com.atomikos:transactions-jta:4.0.4'
+    compile 'com.atomikos:transactions:4.0.4'
+    compile 'com.atomikos:atomikos-util:4.0.4'
+    compile 'javax.transaction:jta:1.1'
+
+    compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
+
+    // Database
+    compile 'org.postgresql:postgresql:42.1.4'
+    runtime 'com.zaxxer:HikariCP'
+
+}
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.cloud:spring-cloud-netflix:1.2.0.RELEASE'
+        mavenBom "org.springframework.boot:spring-boot-dependencies:1.4.2.RELEASE"
+        mavenBom "org.springframework.cloud.stream.app:spring-cloud-stream-app-dependencies:1.0.4.RELEASE"
+    }
+
+    dependencies {
+        // DB Pooling
+        dependency 'com.zaxxer:HikariCP:2.6.1'
+    }
+}
+
+bootRun {
+    systemProperties = System.properties
+}

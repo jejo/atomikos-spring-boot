@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    #datasource1
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/testdb?currentSchema=ds1
+    username: postgres
+    password: postgres
+    #datasource2
+    driver-class-name2: org.postgresql.Driver
+    url2: jdbc:postgresql://localhost:5432/testdb?currentSchema=ds2
+    username2: postgres
+    password2: postgres
